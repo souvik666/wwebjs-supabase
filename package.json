@@ -1,0 +1,49 @@
+{
+  "name": "wwebjs-supabase",
+  "version": "1.0.0",
+  "description": "A Supabase plugin for whatsapp-web.js to store session data in Supabase Storage",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "whatsapp",
+    "whatsapp-web.js",
+    "supabase",
+    "session",
+    "storage",
+    "bot",
+    "automation"
+  ],
+  "author": "souvik dutta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/souvik666/wwebjs-supabase.git"
+  },
+  "publishConfig": {
+    "@souvik666:registry": "https://npm.pkg.github.com"
+  },
+  "bugs": {
+    "url": "https://github.com/souvik666/wwebjs-supabase/issues"
+  },
+  "homepage": "https://github.com/souvik666/wwebjs-supabase#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "whatsapp-web.js": ">=1.0.0"
+  }
+}
