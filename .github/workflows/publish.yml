@@ -3,8 +3,6 @@ name: Publish Package
 on:
   release:
     types: [published]
-  push:
-    branches: [main]
 
 jobs:
   publish-npm:
@@ -15,7 +13,7 @@ jobs:
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - run: npm publish
         env:
@@ -33,7 +31,7 @@ jobs:
           node-version: '18'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@souvik666'
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - name: Publish to GitHub Packages
         run: |
