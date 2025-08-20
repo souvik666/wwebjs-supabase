@@ -1,6 +1,6 @@
 {
   "name": "wwebjs-supabase",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Supabase plugin for whatsapp-web.js to store session data in Supabase Storage",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
