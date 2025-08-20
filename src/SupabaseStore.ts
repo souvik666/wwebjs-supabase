@@ -1,60 +1,5 @@
 import * as fs from "fs";
-
-/**
- * Minimal type definitions for Supabase client
- * (no external packages required)
- */
-interface SupabaseStorageFile {
-  name: string;
-  created_at?: string;
-}
-
-interface SupabaseStorageListResult {
-  data: SupabaseStorageFile[] | null;
-  error: { message: string } | null;
-}
-
-interface SupabaseStorageUploadResult {
-  error: { message: string } | null;
-}
-
-interface SupabaseStorageDownloadResult {
-  data: Blob;
-  error: { message: string } | null;
-}
-
-interface SupabaseStorageRemoveResult {
-  error: { message: string } | null;
-}
-
-interface SupabaseStorageBucket {
-  name: string;
-}
-
-interface SupabaseStorageBucketListResult {
-  data: SupabaseStorageBucket[] | null;
-  error: { message: string } | null;
-}
-
-interface SupabaseStorage {
-  from(bucket: string): {
-    list(path: string, options?: { limit?: number }): Promise<SupabaseStorageListResult>;
-    upload(path: string, fileBody: Buffer, options: { cacheControl: string; upsert: boolean; contentType: string }): Promise<SupabaseStorageUploadResult>;
-    download(path: string): Promise<SupabaseStorageDownloadResult>;
-    remove(paths: string[]): Promise<SupabaseStorageRemoveResult>;
-  };
-  listBuckets(): Promise<SupabaseStorageBucketListResult>;
-  createBucket(name: string, options: { public: boolean }): Promise<{ error: { message: string } | null }>;
-}
-
-interface SupabaseClient {
-  storage: SupabaseStorage;
-}
-
-interface SessionOptions {
-  session: string;
-  path?: string;
-}
+import { SupabaseClient, SessionOptions } from "./types";
 
 /**
  * SupabaseStore
@@ -72,6 +17,9 @@ export class SupabaseStore {
     this.client = client;
   }
 
+  /**
+   * Check if a session exists in Supabase Storage
+   */
   async sessionExists(options: SessionOptions): Promise<boolean> {
     const bucketName = `whatsapp-${options.session}`;
     const { data, error } = await this.client.storage.from(bucketName).list("", { limit: 1 });
@@ -82,6 +30,9 @@ export class SupabaseStore {
     return (data?.length ?? 0) > 0;
   }
 
+  /**
+   * Save session data to Supabase Storage
+   */
   async save(options: SessionOptions): Promise<void> {
     const bucketName = `whatsapp-${options.session}`;
     await this.ensureBucket(bucketName);
@@ -99,6 +50,9 @@ export class SupabaseStore {
     await this.deletePrevious(bucketName, options.session);
   }
 
+  /**
+   * Extract session data from Supabase Storage
+   */
   async extract(options: Required<Pick<SessionOptions, "session" | "path">>): Promise<void> {
     const bucketName = `whatsapp-${options.session}`;
     const { data, error } = await this.client.storage
@@ -112,6 +66,9 @@ export class SupabaseStore {
     writeStream.end();
   }
 
+  /**
+   * Delete session data from Supabase Storage
+   */
   async delete(options: SessionOptions): Promise<void> {
     const bucketName = `whatsapp-${options.session}`;
     const { error } = await this.client.storage
@@ -120,6 +77,9 @@ export class SupabaseStore {
     if (error) throw new Error(error.message);
   }
 
+  /**
+   * Delete previous session files, keeping only the latest
+   */
   private async deletePrevious(bucketName: string, session: string): Promise<void> {
     const { data, error } = await this.client.storage.from(bucketName).list("");
     if (error && !error.message.includes("does not exist")) throw new Error(error.message);
@@ -132,6 +92,9 @@ export class SupabaseStore {
     }
   }
 
+  /**
+   * Ensure the bucket exists, create if it doesn't
+   */
   private async ensureBucket(bucketName: string): Promise<void> {
     const { data: buckets, error } = await this.client.storage.listBuckets();
     if (error) throw new Error(error.message);
